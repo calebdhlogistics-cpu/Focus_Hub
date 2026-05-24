@@ -3,6 +3,25 @@
 [View the live Google Sheet here]
 (https://docs.google.com/spreadsheets/d/1LqhETkG8e6kEHTJIhSYnzvjWfyH5cplcZrpqmlW9m4U/edit?usp=sharing)
 
+## Overview
+
+In this section, we document the original prototype of the task management 
+system. The goal was to build a functional, data-driven personal productivity 
+tracker that could capture task details, automate date tracking, and calculate 
+meaningful KPIs across 26 columns from A to Z.
+
+The prototype was built iteratively, prioritizing functionality over 
+architecture. Each column was added progressively as new requirements emerged, 
+resulting in a system that works effectively as a standalone tracker but lacks 
+the structured foundation needed for external integrations, team scalability, 
+and long-term maintainability.
+
+While the prototype successfully demonstrated the core concept — automated 
+task tracking, real-time KPI calculation, and performance monitoring — it 
+highlighted the importance of planning architecture before building. This 
+documentation serves as both a record of what was built and the foundation 
+for understanding why a redesign was necessary.
+
 ### Column Breakdown
 
 - **Column A:** Checkbox — Task completion checkbox
