@@ -1,20 +1,77 @@
-1. Initial Design Limitations
-The original structure was a simple task tracker with basic automation (start/completion timestamps).
-We realized that the formula-based approach for calculating task durations was prone to rounding issues, especially when tasks were completed quickly.
-The initial task age metric (days only) didn't provide enough granularity for short tasks.
-2. Formula and Formatting Pitfalls
-Using mixed date and time formats caused discrepancies in task duration calculations.
-We initially rounded cycle time to whole minutes, which hid short task durations and caused confusion.
-We also realized that separating operational data (like raw task inputs) from calculated KPIs would simplify the structure.
-3. Refactoring Decisions
-After testing, we decided to separate raw task data from calculated metrics, making future dashboard building easier.
-We adopted a more structured layering approach: raw input sheet, automation script, and a separate analysis dashboard sheet.
-This refactor will ensure easier future maintenance and better scalability.
-4. Automation Challenges
-The Apps Script onEdit trigger worked, but it required careful column mapping to avoid misfires.
-We had to standardize status values (e.g., “Completed” vs “Complete”) to prevent script errors.
-In future iterations, we’ll implement error handling to ensure timestamps aren’t overwritten if a user edits the status multiple times.
-5. Next Steps
-Document the new architecture in a dedicated file.
-Begin building the GitHub repo with version history.
-Plan the next refactor to integrate with a dashboard and future automation.
+# Version 1 — Limitations & Lessons
+
+> *Every limitation we hit made Version 2 smarter. This is where we document what hurt.*
+
+---
+
+## 1. Initial Design Limitations
+
+Version 1 started as a simple task tracker with basic automation — timestamps for when tasks started and when they were completed. It worked. But as we used it, the cracks showed up fast.
+
+The formula-based approach for calculating task durations was prone to rounding issues, especially when tasks were completed quickly. Short tasks were being misrepresented in the data — the numbers just didn't feel right.
+
+The task age metric was measured in days only, which didn't give enough granularity for tasks that took hours or minutes. If you completed something in 45 minutes, the system either showed zero days or one day. Neither was accurate.
+
+**The lesson: precision matters more than simplicity when you're measuring real performance.**
+
+---
+
+## 2. Formula and Formatting Pitfalls
+
+Mixing date and time formats inside the same sheet caused real problems. Duration calculations started throwing errors or producing results that looked right but weren't.
+
+We initially rounded cycle time to whole minutes — which sounds reasonable until you realise it was hiding short task durations entirely and causing confusion when comparing tasks.
+
+We also had raw task inputs sitting right next to calculated KPIs on the same sheet. That made the sheet harder to read, harder to debug, and harder to build on top of.
+
+**The lesson: separate your raw data from your calculations. Always.**
+
+---
+
+## 3. Refactoring Decisions
+
+After testing under real usage, we made the decision to separate raw task data from calculated metrics. This wasn't just cosmetic — it fundamentally changed how maintainable the system was.
+
+We moved toward a layered approach:
+
+- **Layer 1** — Raw input sheet (task data only)
+- **Layer 2** — Automation script (Apps Script handling timestamps and triggers)
+- **Layer 3** — Analysis dashboard (calculated KPIs and visualisations)
+
+This separation makes future maintenance cleaner, dashboard building easier, and scaling possible without rebuilding from scratch.
+
+**The lesson: plan your layers before you build, not after you've already mixed everything together.**
+
+---
+
+## 4. Automation Challenges
+
+The Apps Script `onEdit` trigger worked — but it was fragile. It required careful column mapping to avoid misfiring on the wrong edits. One wrong column reference and timestamps were appearing where they shouldn't.
+
+We also ran into status value inconsistencies. The script was looking for "Completed" but users were typing "Complete" — and the automation silently failed. No error. Just missing timestamps.
+
+The biggest issue: if a user changed the status multiple times, the completion timestamp got overwritten. There was no protection against that. A task marked complete, then re-opened, then completed again would lose its original completion date.
+
+**The lesson: automations must be built to handle real human behaviour — not just the ideal path.**
+
+---
+
+## 5. What We Do Differently in Version 2
+
+- Raw data and calculated metrics live in separate layers
+- Status values are controlled through dropdowns — no more typos breaking automations
+- Completion timestamps are locked once set — re-opening a task doesn't overwrite history
+- Error handling is built into every automation script from the start
+- Architecture is planned before a single formula is written
+
+---
+
+## Closing Thought
+
+None of these limitations were failures. Every single one was a lesson that made the next version better. Version 1 wasn't supposed to be perfect — it was supposed to teach us what perfect needed to look like.
+
+**That's exactly what it did.**
+
+---
+
+*Document your limitations. They're not embarrassing — they're proof you think critically about your own work.*
